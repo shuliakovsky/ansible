@@ -1,0 +1,7 @@
+---
+#EXAMPLE VARIABLES
+vsphere_host: "esxi.example.com"
+vsphere_user: "root"
+vsphere_password: "Pa$sw0rD"
+cluster: "esxi.example.com"
+notes: "deployed with ansible"

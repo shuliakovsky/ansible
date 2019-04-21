@@ -1,0 +1,19 @@
+#EXAMPLE INVENTORY FILE
+[test]
+test1.example.com     vcpu=4  memory=2048     disk_size=16    host_ip=192.168.1.21
+test2.example.com     vcpu=4  memory=2048     disk_size=16    host_ip=192.168.1.22
+test3.example.com     vcpu=4  memory=2048     disk_size=16    host_ip=192.168.1.23
+test4.example.com     vcpu=4  memory=2048     disk_size=16    host_ip=192.168.1.24
+test5.example.com     vcpu=4  memory=2048     disk_size=16    host_ip=192.168.1.25
+
+
+[test:vars]
+guest_id="centos7_64Guest"
+ansible_host_group="test"
+
+[all:vars]
+datastore="datastore"
+vsphere_folder="/"
+guest_network="VM Network"
+
+

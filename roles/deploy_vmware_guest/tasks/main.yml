@@ -1,0 +1,175 @@
+---
+# Usage ansible-playbook -i hosts deploy_vmware_guests.yml --forks=1 --diff ... you need forks=1 to correct dhcpd.conf update with multiple hosts deploy
+- name: create the VM
+  tags:
+    - deployvm
+  vmware_guest:
+    hostname: '{{ vsphere_host }}'
+    username: '{{ vsphere_user }}'
+    password: '{{ vsphere_password }}'
+    validate_certs: no
+    #cluster: '{{ cluster }}'
+    #when: esxi_hostname == ""
+    esxi_hostname: '{{ cluster }}'
+    #when: cluster == ""
+    #datacenter: 'ExampleDC'
+    #datacenter: '{{ cluster }}'
+    folder: '{{  vsphere_folder  }}'
+    name: '{{ inventory_hostname }}'
+    state: poweredon
+    guest_id: '{{ guest_id }}'
+    annotation: "{{ notes }}"
+    disk:
+    - size_gb: "{{ disk_size }}"
+      type: thin
+      datastore: '{{ datastore }}'
+    networks:
+    - name: '{{ guest_network }}'
+    hardware:
+      memory_mb: '{{ memory }}'
+      num_cpus: '{{ vcpu }}'
+      boot_firmware: bios #efi/bios depends on your pxe configuration
+      version: 14
+    wait_for_ip_address: no
+  deledhcp_to: localhost
+  ignore_errors: yes
+
+- name: poweroff VP
+  tags:
+    - deployvm
+  vmware_guest:
+    hostname: '{{ vsphere_host }}'
+    username: '{{ vsphere_user }}'
+    password: '{{ vsphere_password }}'
+    validate_certs: no
+    #cluster: '{{ cluster }}'
+    #when: esxi_hostname == ""
+    esxi_hostname: '{{ cluster }}'
+    #when: cluster == ""
+    #datacenter: 'ExampleDC'
+    #datacenter: '{{ cluster }}'
+    folder: '{{  vsphere_folder  }}'
+    name: '{{ inventory_hostname }}'
+    state: poweredoff
+    #guest_id: '{{ guest_id }}'
+
+  deledhcp_to: localhost
+  ignore_errors: no
+  register: deploy
+
+- name: Gather facts about deployed VMs
+  tags:
+    - getinfo
+  vmware_guest_facts:
+    hostname: '{{ vsphere_host }}'
+    username: '{{ vsphere_user }}'
+    password: '{{ vsphere_password }}'
+    datacenter: '{{ cluster }}'
+    validate_certs: no
+    name: '{{ inventory_hostname }}'
+  deledhcp_to: localhost
+  register: vminfo
+  ignore_errors: yes
+
+- name: stdout
+  tags:
+    - getinfo
+  debug: var=vminfo
+  with_items: vminfo
+
+#- name: Output
+#  tags:
+#    - getinfo
+#  debug:
+#    msg:
+#      - 'host {{ vminfo.instance.hw_name }}'
+#      - 'hardware ethernet {{ vminfo.instance.hw_eth0.macaddress }}'
+#      - 'ipv4 {{ vminfo.instance.ipv4  }}'
+
+- name: Update dhcp config
+  tags:
+    - dhcpupdate
+  vars:
+    host:
+      name: '{{ vminfo.instance.hw_name }}'
+      mac: '{{ vminfo.instance.hw_eth0.macaddress }}'
+      ip: '{{ vminfo.instance.ipv4  }}'
+  blockinfile:
+    state: present
+    path: |-
+            /etc/dhcp/hosts/{% if not host.ip %}{{ host_ip.split('.')[0:3]| join('.') }}{%  else %}
+            {{ host.ip.split('.')[0:3]| join('.') }}{% endif %}.255.conf
+    backup: no
+    marker: "# {mark} {{ host.name}} {{ notes }}"
+    marker_end: "#END"
+    block: |
+     host {{ host.name }} {
+       hardware ethernet {{ host.mac }};
+       fixed-address {% if not host.ip %} {{ host_ip }} {%  else %} {{ host.ip }}{% endif %};}
+    validate: dhcpd -t -cf %s
+    insertafter: EOF
+  deledhcp_to: dhcp.example.com
+
+- name: Update master dns config
+  tags:
+    - dnsupdate
+  vars:
+    host:
+      name: '{{ vminfo.instance.hw_name }}'
+      mac: '{{ vminfo.instance.hw_eth0.macaddress }}'
+      ip: '{{ vminfo.instance.ipv4  }}'
+  lineinfile:
+    state: present
+    insertafter: EOF
+    dest: '/var/named/master/local_example.com.dns'
+    line: "{{ inventory_hostname.split('.')[0]}}\t\t\tIN\tA\t{% if not host.ip %}{{ host_ip }}{%  else %}{{ host.ip }}{% endif %}"
+    backup: no
+  deledhcp_to: dhcp.example.com
+
+- name: Update reverse DNS
+  tags:
+    - dnsupdate
+  vars:
+    host:
+      name: '{{ vminfo.instance.hw_name }}'
+      mac: '{{ vminfo.instance.hw_eth0.macaddress }}'
+      ip: '{{ vminfo.instance.ipv4  }}'
+  lineinfile:
+    state: present
+    insertafter: EOF
+    dest: '/var/named/rev/1.168.192.in-addr.arpa.dns'
+    line: "{% if not host.ip %}{{ host_ip.split('.')[-1]}}{%  else %}{{ host.ip.split('.')[-1] }}{% endif %}\t\tIN\tPTR\t{{  inventory_hostname  }}."
+    backup: no
+  deledhcp_to: dhcp.example.com
+
+- name: restart dhcpd
+  service: name=dhcpd state=restarted
+  deledhcp_to: dhcp.example.com
+
+- name: restart named
+  service: name=named state=restarted
+  deledhcp_to: dhcp.example.com
+
+- name: poweron VM
+  tags:
+    - deployvm
+  vmware_guest:
+    hostname: '{{ vsphere_host }}'
+    username: '{{ vsphere_user }}'
+    password: '{{ vsphere_password }}'
+    validate_certs: no
+    #cluster: '{{ cluster }}'
+    #when: esxi_hostname == ""
+    esxi_hostname: '{{ cluster }}'
+    #when: cluster == ""
+    #datacenter: 'ExampleDC'
+    #datacenter: '{{ cluster }}'
+    folder: '{{  vsphere_folder  }}'
+    name: '{{ inventory_hostname }}'
+    state: poweredon
+    #guest_id: '{{ guest_id }}'
+
+  deledhcp_to: localhost
+  ignore_errors: yes
+
+
