@@ -108,7 +108,7 @@
        fixed-address {% if not host.ip %} {{ host_ip }} {%  else %} {{ host.ip }}{% endif %};}
     validate: dhcpd -t -cf %s
     insertafter: EOF
-  delegate_to: dhcp.example.com
+  delegate_to: {{ dhcp_named_host }}
 
 - name: Update master dns config
   tags:
@@ -124,7 +124,7 @@
     dest: '/var/named/master/local_example.com.dns'
     line: "{{ inventory_hostname.split('.')[0]}}\t\t\tIN\tA\t{% if not host.ip %}{{ host_ip }}{%  else %}{{ host.ip }}{% endif %}"
     backup: no
-  delegate_to: dhcp.example.com
+  delegate_to: {{ dhcp_named_host }}
 
 - name: Update reverse DNS
   tags:
@@ -140,15 +140,15 @@
     dest: '/var/named/rev/1.168.192.in-addr.arpa.dns'
     line: "{% if not host.ip %}{{ host_ip.split('.')[-1]}}{%  else %}{{ host.ip.split('.')[-1] }}{% endif %}\t\tIN\tPTR\t{{  inventory_hostname  }}."
     backup: no
-  delegate_to: dhcp.example.com
+  delegate_to: {{ dhcp_named_host }}
 
 - name: restart dhcpd
   service: name=dhcpd state=restarted
-  delegate_to: dhcp.example.com
+  delegate_to: {{ dhcp_named_host }}
 
 - name: restart named
   service: name=named state=restarted
-  delegate_to: dhcp.example.com
+  delegate_to: {{ dhcp_named_host }}
 
 - name: poweron VM
   tags:
