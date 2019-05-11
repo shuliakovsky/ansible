@@ -31,7 +31,7 @@
       boot_firmware: bios #efi/bios depends on your pxe configuration
       version: 14
     wait_for_ip_address: no
-  deledhcp_to: localhost
+  delegate_to: localhost
   ignore_errors: yes
 
 - name: poweroff VP
@@ -53,7 +53,7 @@
     state: poweredoff
     #guest_id: '{{ guest_id }}'
 
-  deledhcp_to: localhost
+  delegate_to: localhost
   ignore_errors: no
   register: deploy
 
@@ -67,7 +67,7 @@
     datacenter: '{{ cluster }}'
     validate_certs: no
     name: '{{ inventory_hostname }}'
-  deledhcp_to: localhost
+  delegate_to: localhost
   register: vminfo
   ignore_errors: yes
 
@@ -108,7 +108,7 @@
        fixed-address {% if not host.ip %} {{ host_ip }} {%  else %} {{ host.ip }}{% endif %};}
     validate: dhcpd -t -cf %s
     insertafter: EOF
-  deledhcp_to: dhcp.example.com
+  delegate_to: dhcp.example.com
 
 - name: Update master dns config
   tags:
@@ -124,7 +124,7 @@
     dest: '/var/named/master/local_example.com.dns'
     line: "{{ inventory_hostname.split('.')[0]}}\t\t\tIN\tA\t{% if not host.ip %}{{ host_ip }}{%  else %}{{ host.ip }}{% endif %}"
     backup: no
-  deledhcp_to: dhcp.example.com
+  delegate_to: dhcp.example.com
 
 - name: Update reverse DNS
   tags:
@@ -140,15 +140,15 @@
     dest: '/var/named/rev/1.168.192.in-addr.arpa.dns'
     line: "{% if not host.ip %}{{ host_ip.split('.')[-1]}}{%  else %}{{ host.ip.split('.')[-1] }}{% endif %}\t\tIN\tPTR\t{{  inventory_hostname  }}."
     backup: no
-  deledhcp_to: dhcp.example.com
+  delegate_to: dhcp.example.com
 
 - name: restart dhcpd
   service: name=dhcpd state=restarted
-  deledhcp_to: dhcp.example.com
+  delegate_to: dhcp.example.com
 
 - name: restart named
   service: name=named state=restarted
-  deledhcp_to: dhcp.example.com
+  delegate_to: dhcp.example.com
 
 - name: poweron VM
   tags:
@@ -169,7 +169,7 @@
     state: poweredon
     #guest_id: '{{ guest_id }}'
 
-  deledhcp_to: localhost
+  delegate_to: localhost
   ignore_errors: yes
 
 
