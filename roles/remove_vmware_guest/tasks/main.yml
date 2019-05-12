@@ -88,8 +88,6 @@
 
 - name: remove VM
   tags: removevm
-  vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'

@@ -13,3 +13,8 @@ dhcp_host: "gate.example.com"
 dns_host: "gate.example.com"
 dhcp_conf_folder: "/etc/dhcp/hosts/"
 
+
+#DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU DOING!!!
+check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
+
+

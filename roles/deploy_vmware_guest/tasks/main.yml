@@ -2,8 +2,6 @@
 # Usage ansible-playbook -i hosts deploy_vmware_guests.yml --forks=1 --ask-vault-pass... to correct dhcpd.conf update
 - name: create the VM
   tags: deployvm, dnsupdate
-  vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -31,8 +29,6 @@
 
 - name: poweroff VP
   tags: deployvm
-  vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -41,7 +37,6 @@
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredoff
-    #guest_id: '{{ guest_id }}'
 
   delegate_to: localhost
   ignore_errors: no
@@ -132,8 +127,6 @@
 
 - name: poweron VM
   tags: deployvm
-  vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -142,7 +135,6 @@
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredon
-    #guest_id: '{{ guest_id }}'
 
   delegate_to: localhost
   ignore_errors: yes
