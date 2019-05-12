@@ -2,14 +2,13 @@
 # Usage ansible-playbook -i hosts deploy_vmware_guests.yml --forks=1 --ask-vault-pass... to correct dhcpd.conf update
 - name: create the VM
   tags: deployvm, dnsupdate
+  vars:
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
-    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
-    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredon
@@ -32,14 +31,13 @@
 
 - name: poweroff VP
   tags: deployvm
+  vars:
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
-    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
-    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredoff
@@ -55,7 +53,7 @@
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
-    datacenter: '{{ cluster }}'
+    datacenter: '{{ vsphere_cluster }}'
     validate_certs: no
     name: '{{ inventory_hostname }}'
   delegate_to: localhost
@@ -134,14 +132,13 @@
 
 - name: poweron VM
   tags: deployvm
+  vars:
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
-    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
-    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredon

@@ -1,13 +1,15 @@
 ---
-#EXAMPLE VARIABLES
+#VMware Configuration
 vsphere_host: "esxi.example.com"
 vsphere_user: "root"
-vsphere_password: "Pa$sw0rD"
-cluster: "esxi.example.com"
-#vsphere_datacenter="ExampleDC"    # uncomment if you have vSphere datacenter
-notes: "deployed with ansible"
-dhcp_host: "dhcp.example.com"
+vsphere_password: "P@$sW0rD"
+vsphere_cluster: "esxi.example.com" #enter cluster name or esxi host
+#vsphere_datacenter: "ExampleDC" #uncomment if You have vSphere datacenter
+
+
+#DHCP/DNS Configuration
+notes: "_"
+dhcp_host: "gate.example.com"
+dns_host: "gate.example.com"
 dhcp_conf_folder: "/etc/dhcp/hosts/"
-dns_host: "dns.example.com"
-primary_dns_file: "/var/named/master/local_example.com.dns"
-reverse_dns_file: "/var/named/rev/1.168.192.in-addr.arpa.dns"
+

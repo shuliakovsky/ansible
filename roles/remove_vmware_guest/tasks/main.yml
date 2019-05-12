@@ -7,7 +7,7 @@
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
-    datacenter: '{{ cluster }}'
+    datacenter: '{{ vsphere_check_config }}'
     validate_certs: no
     name: '{{ inventory_hostname }}'
   delegate_to: localhost
@@ -88,14 +88,13 @@
 
 - name: remove VM
   tags: removevm
+  vars:
+    check_check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.check_config: {{ vsphere_check_config }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_check_config  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
-    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
-    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: '{{ item }}'
