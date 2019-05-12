@@ -26,8 +26,8 @@ _configupdate_ - update dhcp and dns configuration (depends on role)
 
 **EXAMPLES:**
 
-deploy some guests: `_ansible-playbook -i hosts deploy_vmware_guests.yml  --diff_ `
+deploy some guests: `ansible-playbook -i hosts deploy_vmware_guests.yml  --diff`
 
-only update dhcp/dns: `_ansible-playbook -i hosts deploy_vmware_guests.yml --tags "configupdate" --diff_`
+only update dhcp/dns: `ansible-playbook -i hosts deploy_vmware_guests.yml --tags "configupdate" --diff`
 
-remove dhcp/dns but do not remove vmware guests: _`ansible-playbook -i hosts remove_vmware_guests.yml --tags "configupdate" --diff`_
+remove dhcp/dns but do not remove vmware guests: `ansible-playbook -i hosts remove_vmware_guests.yml --tags "configupdate" --diff`
