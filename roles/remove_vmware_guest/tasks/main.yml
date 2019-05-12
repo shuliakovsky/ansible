@@ -7,7 +7,7 @@
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
-    datacenter: '{{ vsphere_check_config }}'
+    datacenter: '{{ vsphere_cluster }}'
     validate_certs: no
     name: '{{ inventory_hostname }}'
   delegate_to: localhost
