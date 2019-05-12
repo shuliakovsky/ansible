@@ -1,8 +1,8 @@
 **Deploy/remove VMware guests and/or configure dhcpd and named after that.**
 
-**USAGE:**
-1) Update group_vars/all file with your VMware configuration
-2) Prepare inventory file with exaple listed in hosts file
+**INSTALLATION:**
+1) Update group_vars/all file with your VMware configuration.
+2) Prepare inventory file with example, listed in hosts file.
  
 **ROLES:**
 
