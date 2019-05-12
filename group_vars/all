@@ -7,4 +7,7 @@ cluster: "esxi.example.com"
 #vsphere_datacenter="ExampleDC"    # uncomment if you have vSphere datacenter
 notes: "deployed with ansible"
 dhcp_host: "dhcp.example.com"
+dhcp_conf_folder: "/etc/dhcp/hosts/"
 dns_host: "dns.example.com"
+primary_dns_file: "/var/named/master/local_example.com.dns"
+reverse_dns_file: "/var/named/rev/1.168.192.in-addr.arpa.dns"

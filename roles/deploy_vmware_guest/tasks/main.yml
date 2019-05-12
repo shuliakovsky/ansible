@@ -37,12 +37,9 @@
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'
-    #when: esxi_hostname == ""
-    esxi_hostname: '{{ cluster }}'
-    #when: cluster == ""
-    #datacenter: 'AdamantiumDC'
-    #datacenter: '{{ cluster }}'
+    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
+    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
+    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredoff
@@ -70,15 +67,6 @@
   debug: var=vminfo
   with_items: vminfo
 
-#- name: Output
-#  tags:
-#    - getinfo
-#  debug:
-#    msg:
-#      - 'host {{ vminfo.instance.hw_name }}'
-#      - 'hardware ethernet {{ vminfo.instance.hw_eth0.macaddress }}'
-#      - 'ipv4 {{ vminfo.instance.ipv4  }}'
-
 - name: Update dhcp config
   tags: deployvm, dhcpupdate, configupdate
   vars:
@@ -89,7 +77,7 @@
   blockinfile:
     state: present
     path: |-
-            /etc/dhcp/hosts/{% if not host.ip %}{{ host_ip.split('.')[0:3]| join('.') }}{%  else %}
+            {{ dhcp_conf_folder }}{% if not host.ip %}{{ host_ip.split('.')[0:3]| join('.') }}{%  else %}
             {{ host.ip.split('.')[0:3]| join('.') }}{% endif %}.255.conf
     backup: no
     marker: "# {mark} {{ host.name}} {{ notes }}"
@@ -112,7 +100,7 @@
   lineinfile:
     state: present
     insertafter: EOF
-    dest: '/var/named/master/local_shuliakovsky.com.dns'
+    dest: '{{ primary_dns_file }}' #your dns filename
     line: "{{ inventory_hostname.split('.')[0]}}\t\t\tIN\tA\t{% if not host.ip %}{{ host_ip }}{%  else %}{{ host.ip }}{% endif %}"
     backup: no
   delegate_to: "{{ dns_host }}"
@@ -127,7 +115,7 @@
   lineinfile:
     state: present
     insertafter: EOF
-    dest: '/var/named/rev/1.168.192.in-addr.arpa.dns'
+    dest: '{{ reverse_dns_file }}'  #your dns filename
     line: "{% if not host.ip %}{{ host_ip.split('.')[-1]}}{%  else %}{{ host.ip.split('.')[-1] }}{% endif %}\t\tIN\tPTR\t{{  inventory_hostname  }}."
     backup: no
   delegate_to: "{{ dns_host }}"
@@ -151,12 +139,9 @@
     username: '{{ vsphere_user }}'
     password: '{{ vsphere_password }}'
     validate_certs: no
-    #cluster: '{{ cluster }}'
-    #when: esxi_hostname == ""
-    esxi_hostname: '{{ cluster }}'
-    #when: cluster == ""
-    #datacenter: 'AdamantiumDC'
-    #datacenter: '{{ cluster }}'
+    #cluster: '{{ cluster }}'               # uncomment if you have a cluster
+    esxi_hostname: '{{ cluster }}'          # comment if you have a cluster
+    #datacenter: '{{ vsphere_datacenter }}' # uncomment if you have datacenter
     folder: '{{  vsphere_folder  }}'
     name: '{{ inventory_hostname }}'
     state: poweredon

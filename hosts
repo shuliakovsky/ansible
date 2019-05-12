@@ -15,5 +15,7 @@ ansible_host_group="test"
 datastore="datastore"
 vsphere_folder="/"
 guest_network="VM Network"
+primary_dns_file: "/var/named/master/local_example.com.dns"
+reverse_dns_file: "/var/named/rev/1.168.192.in-addr.arpa.dns"
 
 
