@@ -89,7 +89,7 @@
 - name: remove VM
   tags: removevm
   vars:
-    check_check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.check_config: {{ vsphere_check_config }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_check_config  }}{% endif %}'
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -101,7 +101,6 @@
   with_items:
     - poweredoff
     - absent
-    #guest_id: '{{ guest_id }}'
   delegate_to: localhost
   ignore_errors: yes
 

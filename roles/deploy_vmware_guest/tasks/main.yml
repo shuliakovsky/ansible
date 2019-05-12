@@ -3,7 +3,7 @@
 - name: create the VM
   tags: deployvm, dnsupdate
   vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -32,7 +32,7 @@
 - name: poweroff VP
   tags: deployvm
   vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
@@ -133,7 +133,7 @@
 - name: poweron VM
   tags: deployvm
   vars:
-    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_cluster  }}{% endif %}'
+    check_config: '{% if vsphere_datacenter is defined %}vmare_guest.datacenter: {{ vspere_datacenter }}vmware_guest.cluster: {{ vsphere_cluster }}{% else %}vmare_guest.esxi_hostname:{{  vsphere_host  }}{% endif %}'
   vmware_guest:
     hostname: '{{ vsphere_host }}'
     username: '{{ vsphere_user }}'
