@@ -3,7 +3,7 @@
 vsphere_host: "esxi.example.com"
 vsphere_user: "root"
 vsphere_password: "P@$sW0rD"
-#vsphere_cluster: "esxi.example.com" #uncomment if You have vSphere cluster
+vsphere_cluster: "{{ vsphere_host }}" #edit if you have a vSphere cluster
 #vsphere_datacenter: "ExampleDC" #uncomment if You have vSphere datacenter
 
 
