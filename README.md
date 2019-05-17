@@ -21,6 +21,10 @@ _dhcpupdate_ - only opdate dhcp condfiguration (depends on role)
 
 _configupdate_ - update dhcp and dns configuration (depends on role)
 
+_poweroff_ - powering off guests
+
+_powerof_ - powering on guests
+
 
 **EXAMPLES:**
 
