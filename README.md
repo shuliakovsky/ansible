@@ -26,6 +26,7 @@ _poweroff_ - powering off guests
 _powerof_ - powering on guests
 
 
+
 **EXAMPLES:**
 
 deploy some guests: `ansible-playbook -i hosts deploy_vmware_guests.yml  --diff`
